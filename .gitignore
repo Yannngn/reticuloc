@@ -2,8 +2,6 @@
 data/
 backup/
 
-# Run dir
-runs/
 
 # checkpoint files
 *.pt
