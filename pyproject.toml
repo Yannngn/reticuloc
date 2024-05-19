@@ -7,14 +7,16 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-ultralytics = "~8.2"
-fastapi = "~0.111.0"
-opencv-python = "4.9.*"
-glob2 = ">=0.7"
-scikit-learn = "^1.4.2"
+fastapi = "^0.111.0"
+opencv-python = "^4.9.0.80"
+ultralytics = "^8.2.18"
 
 [tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+glob2 = "^0.7"
+pre-commit = "^3.7.1"
 pydantic = "^2.7.1"
+scikit-learn = "^1.4.2"
 
 [build-system]
 requires = ["poetry-core"]
