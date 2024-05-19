@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "reticuloc"
+version = "0.1.0"
+description = "reticulocytes and erythrocytes detection using ultralytics YOLO models + FastAPI"
+authors = ["Yann Nóbrega"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+ultralytics = "~8.2"
+fastapi = "~0.111.0"
+opencv-python = "4.9.*"
+glob2 = ">=0.7"
+scikit-learn = "^1.4.2"
+
+[tool.poetry.group.dev.dependencies]
+pydantic = "^2.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
