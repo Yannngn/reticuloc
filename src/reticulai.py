@@ -14,9 +14,10 @@ from results import ResultsCutter, ResultsJsonEncoder
 
 
 class ReticulAI:
-    checkpoint_path = "aug2/weights/best.pt"
+    # checkpoint_name = "yolov9c_aug.pt"
+    checkpoint_name = "yolov8n_aug.pt"
 
-    def __init__(self, checkpoints_dir: str = "runs"):
+    def __init__(self, checkpoints_dir: str = "checkpoints"):
         self.checkpoints_dir = checkpoints_dir
 
         self._load_model()
@@ -28,7 +29,7 @@ class ReticulAI:
             return self.model.predict(f.name, conf=0.75, verbose=False)[0]
 
     def _load_model(self):
-        self.model: YOLO = YOLO(os.path.join(self.checkpoints_dir, self.checkpoint_path))
+        self.model: YOLO = YOLO(os.path.join(self.checkpoints_dir, self.checkpoint_name))
         self.names: dict[int, str] = self.model.names  # type: ignore
 
 
