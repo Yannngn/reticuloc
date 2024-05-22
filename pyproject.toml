@@ -10,6 +10,7 @@ python = ">=3.10"
 fastapi = "^0.111.0"
 opencv-python = "^4.9.0.80"
 ultralytics = "^8.2.18"
+sqlalchemy = "^2.0.30"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"

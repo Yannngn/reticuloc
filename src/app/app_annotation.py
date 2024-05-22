@@ -3,8 +3,8 @@ import binascii
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
+from app.schemas.image import ImageBase
 from results import ResultsJsonEncoder
 from reticulai import ReticulAI
 
@@ -19,19 +19,19 @@ app.add_middleware(
 )
 
 
-class ImageData(BaseModel):
-    image_data: str
-
-
 @app.post("/detect")
-async def detect(image_data: ImageData) -> list[dict]:
+async def detect(image_data: ImageBase) -> list[dict]:
     detector = ReticulAI()
 
     try:
-        _ = base64.b64decode(image_data.image_data, validate=True)
-    except binascii.Error as e:
-        raise HTTPException(status_code=400, detail=f"{e} Invalid image data")
+        data = image_data.image
+        extension = data.split(";")[0].split("/")[1]
+        data = data.replace(f"data:image/{extension};base64,", "")
 
-    result = detector.detect(image_data.image_data)
+        _ = base64.urlsafe_b64decode(data)
+    except binascii.Error:
+        raise HTTPException(status_code=400, detail=f"Invalid image data")
+
+    result = detector.detect(data, "." + extension)
 
     return ResultsJsonEncoder.response_with_boxes(result, detector.names)
