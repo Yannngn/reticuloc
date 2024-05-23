@@ -1,24 +1,19 @@
-import base64
-import binascii
+import os
+import sys
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 
-from app.schemas.detection import DetectionBase
-from app.schemas.image import ImageBase
-from results import ResultsJsonEncoder
-from reticulai import ReticulAI
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
+
+from src import utils
+from src.app.schemas.detection import DetectionBase
+from src.app.schemas.detection_count import DetectionCountBase
+from src.app.schemas.detection_crops import DetectionCropsBase
+from src.app.schemas.image import ImageBase
+from src.model import json_encoder
+from src.model.reticulai import ReticulAI
 
 app = FastAPI()
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
 
 
 @app.get("/")
@@ -28,19 +23,38 @@ async def root():
 
 @app.post("/detect")
 async def detect(image_data: ImageBase) -> list[DetectionBase]:
+    _ = utils.check_b64(image_data.data)
+
     detector = ReticulAI()
 
-    try:
-        data = image_data.image
-        extension = data.split(";")[0].split("/")[1]
-        data = data.replace(f"data:image/{extension};base64,", "")
+    result = detector.detect(image_data.data)
 
-        _ = base64.urlsafe_b64decode(data)
-    except binascii.Error:
-        raise HTTPException(status_code=400, detail=f"Invalid image data")
+    response = json_encoder.response_with_boxes(result, detector.names)
 
-    result = detector.detect(data, "." + extension)
+    return response
 
-    response = ResultsJsonEncoder.response_with_crops(result, detector.names)
 
-    return [DetectionBase(**r) for r in response]
+@app.post("/detect-crops")
+async def detect_crops(image_data: ImageBase) -> list[DetectionCropsBase]:
+    _ = utils.check_b64(image_data.data)
+
+    detector = ReticulAI()
+
+    result = detector.detect(image_data.data)
+
+    response = json_encoder.response_with_crops(result, detector.names)
+
+    return response
+
+
+@app.post("/detect-count")
+async def detect_count(image_data: ImageBase) -> DetectionCountBase:
+    _ = utils.check_b64(image_data.data)
+
+    detector = ReticulAI()
+
+    result = detector.detect(image_data.data)
+
+    response = json_encoder.response_with_count(result, detector.names)
+
+    return response

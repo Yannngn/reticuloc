@@ -1,15 +1,16 @@
-from pydantic import Base64UrlStr, BaseModel
+from pydantic import BaseModel
 
 
-class UserBase(BaseModel):
-    image: Base64UrlStr
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
 
 
-class UserRequest(UserBase): ...
-
-
-class UserResponse(UserBase):
+class UserDisplay(BaseModel):
     id: int
+    username: str
+    email: str
 
     class Config:
         orm_mode = True

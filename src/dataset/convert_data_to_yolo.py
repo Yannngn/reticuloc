@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from glob2 import glob
 
-sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 
 from src.dataset.labels import REV_DICT
 
